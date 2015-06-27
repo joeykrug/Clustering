@@ -34,11 +34,24 @@ def newMean(cmax):
     mean = [y / cmax.rep for y in x]
     return(mean)
 
+def outsideCluster(features,rep,threshold=0.50):
+    if(threshold==0.50):
+        threshold = np.log10(len(features[0]))/1.77
+    global best
+    global bestDist
+    global bestClusters
+    best = None
+    bestDist = 2**255
+    bestClusters = None
+    return(cluster(features,rep,1,threshold))
+
 # expects a numpy array for reports and rep vector
 def cluster(features, rep, times=1, threshold=0.50, distance=L2dist):
     #cluster the rows of the "features" matrix
     distances={}
-    threshold = np.log10(len(features[0]))/1.7
+    logging.warning(threshold)
+    if(threshold==0.50):
+        threshold = np.log10(len(features[0]))/1.7
     currentclustid=-1
     clusters = empty(1, dtype=object)
     for n in range(len(rep)):
@@ -102,6 +115,7 @@ def process(clusters, numReporters, times, features, rep, threshold):
     for x in range(len(distMatrix)):
         repVector[x] = 1 - distMatrix[x]/(amax(distMatrix)+0.00000001)
     logging.warning(normalize(repVector))
+    logging.warning(distMatrix)
     return(normalize(repVector))
 
 def normalize(v):
